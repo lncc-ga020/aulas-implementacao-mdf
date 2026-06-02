@@ -3,7 +3,7 @@
 Template para atividades de implementação baseados em notebooks Jupyter com ambiente
 reprodutível usando [Pixi](https://pixi.prefix.dev/latest/). Este template é exclusivo
 para trabalhos que utilizem o Método de Diferenças Finitas (MDF), com os principais pacotes
-científicos open source de MDF para problemas de ODE/PDE. 
+científicos open source de MDF para problemas de ODE/PDE.
 
 Este repositório serve como ponto de partida para estudos computacionais,
 experimentos numéricos, análises de dados e atividades didáticas em que é
