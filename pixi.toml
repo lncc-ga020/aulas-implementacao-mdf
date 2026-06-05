@@ -1,5 +1,5 @@
 [workspace]
-name = "template-mdf"
+name = "aulas-implementacao-mdf"
 description = "Aulas de implementação com Diferenças Finitas na disciplina GA-020 do LNCC"
 channels = ["conda-forge"]
 platforms = ["linux-64", "osx-arm64", "win-64"]
