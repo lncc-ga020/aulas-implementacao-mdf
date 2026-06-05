@@ -1,207 +1,180 @@
 # template-mdf
 
-Template para atividades de implementação baseados em notebooks Jupyter com ambiente
-reprodutível usando [Pixi](https://pixi.prefix.dev/latest/). Este template é exclusivo
-para trabalhos que utilizem o Método de Diferenças Finitas (MDF), com os principais pacotes
-científicos open source de MDF para problemas de ODE/PDE.
+Repositório com notebooks de exemplos para estudos computacionais em métodos
+numéricos, com ambiente reprodutível usando
+[Pixi](https://pixi.prefix.dev/latest/), Jupyter e Jupytext.
 
-Este repositório serve como ponto de partida para estudos computacionais,
-experimentos numéricos, análises de dados e atividades didáticas em que é
-importante que outras pessoas consigam instalar o mesmo ambiente e reproduzir os
-notebooks com o mínimo possível de configuração manual.
+O foco atual está em problemas de ODE e PDE resolvidos com ferramentas do
+ecossistema científico Python, em particular `scipy` e `py-pde`.
 
 ## Objetivos
 
-- Padronizar projetos de notebooks usados em atividades científicas e
-  acadêmicas.
-- Facilitar a reprodução dos resultados por alunos e colaboradores.
-- Evitar problemas comuns de ambiente, como versões diferentes de Python,
-  NumPy, SciPy, Jupyter ou outras bibliotecas.
-- Manter notebooks e scripts auxiliares organizados e formatados.
+- Organizar notebooks didáticos de métodos numéricos.
+- Manter exemplos executáveis do começo ao fim.
+- Facilitar reprodução de resultados com um ambiente Pixi versionado.
+- Sincronizar notebooks `.ipynb` com arquivos `.py` em formato Jupytext.
+- Comparar métodos numéricos por erro, convergência, estabilidade e custo.
 
-## Conteúdo do repositório
+## Estrutura do repositório
 
-- `pixi.toml`: define o ambiente computacional do projeto e as tarefas
-  disponíveis.
-- `pixi.lock`: registra as versões resolvidas das dependências para melhorar a
-  reprodutibilidade.
-- `.pre-commit-config.yaml`: configura verificações automáticas de formatação e
-  limpeza dos notebooks.
-- `jupytext.toml`: configura o uso do Jupytext para sincronizar notebooks
-  `.ipynb` com arquivos texto equivalentes, quando aplicável.
+- `pixi.toml`: define dependências, ambientes e tarefas do projeto.
+- `pixi.lock`: registra as versões resolvidas das dependências.
+- `jupytext.toml`: configura o pareamento entre `.ipynb` e `.py:percent`.
 - `scripts/sync_notebooks.py`: sincroniza notebooks usando Jupytext.
-- `notebooks/`: diretório esperado para os notebooks do projeto.
+- `notebooks/examples/ode/`: exemplos de ODE.
+- `notebooks/examples/pde/`: exemplos de PDE.
 
-Se o diretório `notebooks/` ainda não existir no seu clone local, crie-o antes
-de adicionar novos notebooks:
+## Notebooks disponíveis
 
-```sh
-mkdir -p notebooks
-```
+### ODE
+
+- `notebooks/examples/ode/01-intro-scipy-ode.ipynb`: introdução à solução de
+  ODEs com `scipy`, métodos de passo fixo, convergência e Lotka-Volterra.
+- `notebooks/examples/ode/02-problemas-rigidos.ipynb`: sistemas rígidos,
+  Lorenz, Euler explícito/implícito, métodos adaptativos e comportamento em
+  tempos longos.
+- `notebooks/examples/ode/03-ciclos-estabilidade-bifurcacoes.ipynb`: ciclos,
+  estabilidade, bifurcações e transições qualitativas em sistemas
+  predador-presa.
+
+### PDE
+
+- `notebooks/examples/pde/01-intro-py-pde.ipynb`: introdução à `py-pde` com
+  Poisson 1D estacionário/transiente, análise de convergência, comparação de
+  solvers e um bônus com Lotka-Volterra.
+- `notebooks/examples/pde/02-poisson-2d-py-pde.ipynb`: extensão para Poisson 2D
+  estacionário/transiente, visualização de campos, cortes e mapas espaço-tempo.
+
+## Ambientes Pixi
+
+O projeto define dois ambientes principais:
+
+- `default`: ambiente base para notebooks com `numpy`, `scipy`, `pandas`,
+  `matplotlib`, `jupyterlab`, `jupytext` e ferramentas de formatação.
+- `pypde-env`: ambiente com as dependências do `default` mais a biblioteca
+  `py-pde`.
+
+Para os notebooks de ODE, o ambiente `default` é suficiente. Para os notebooks
+de PDE, use o ambiente `pypde-env`.
 
 ## Como usar
 
 ### 1. Instale o Pixi
 
-Este projeto usa o Pixi para criar um ambiente isolado e reprodutível. Isso
-significa que as bibliotecas usadas nos notebooks ficam separadas das
-bibliotecas instaladas no restante do seu computador.
-
-Instale o Pixi seguindo a documentação oficial:
+Siga a documentação oficial:
 
 <https://pixi.prefix.dev/latest/installation/>
 
-Depois da instalação, feche e abra novamente o terminal. Para conferir se o
-Pixi está disponível, rode:
+Depois da instalação, confira se o Pixi está disponível:
 
 ```sh
 pixi --version
 ```
 
-### 2. Baixe o repositório
-
-Clone o repositório:
+### 2. Clone o repositório
 
 ```sh
-git clone https://github.com/lncc-ga020/template-notebooks.git
+git clone git@github.com:volpatto/template-mdf.git
+cd template-mdf
 ```
 
-Entre na pasta do projeto:
-
-```sh
-cd template-notebooks
-```
-
-### 3. Instale o ambiente do projeto
-
-Dentro da pasta do projeto, rode:
+### 3. Instale as dependências
 
 ```sh
 pixi install --frozen
 ```
 
-O argumento `--frozen` instrui o Pixi a respeitar o arquivo `pixi.lock`. Isso é
-importante para que todos usem, tanto quanto possível, as mesmas versões das
-dependências.
-
-### 4. Ative o ambiente
-
-Depois da instalação, ative o ambiente:
+### 4. Abra os notebooks de ODE
 
 ```sh
 pixi shell
-```
-
-Quando o ambiente está ativo, comandos como `python`, `jupyter`, `ruff` e
-`pre-commit` passam a usar as versões definidas pelo projeto.
-
-### 5. Abra os notebooks
-
-Com o ambiente Pixi ativo, você pode abrir o JupyterLab:
-
-```sh
 jupyter lab
 ```
 
-Depois disso, abra os arquivos `.ipynb` dentro do diretório `notebooks/`.
-
-Também é possível usar o VS Code. Nesse caso, uma forma prática é abrir o VS
-Code a partir do terminal em que o ambiente Pixi já está ativo:
+### 5. Abra os notebooks de PDE
 
 ```sh
-code .
+pixi shell -e pypde-env
+jupyter lab
 ```
 
-No VS Code, abra o notebook desejado e selecione o interpretador Python do
-ambiente Pixi do projeto. Se você usa VS Code com frequência, também é
-recomendável instalar uma extensão para integração com ambientes Pixi.
+No VS Code, selecione o kernel Python correspondente ao ambiente Pixi usado.
 
 ## Fluxo de trabalho recomendado
 
-1. Atualize sua cópia local do repositório antes de começar a trabalhar:
+Antes de editar notebooks, atualize o repositório:
 
-   ```sh
-   git pull
-   ```
+```sh
+git pull
+```
 
-2. Ative o ambiente:
-
-   ```sh
-   pixi shell
-   ```
-
-3. Abra o JupyterLab ou o VS Code.
-
-4. Trabalhe nos notebooks dentro de `notebooks/`.
-
-5. Antes de enviar alterações, rode:
-
-   ```sh
-   pixi run precommit-sync
-   ```
-
-Esse comando sincroniza os notebooks com Jupytext e executa as verificações de
-formatação configuradas para o projeto.
-
-## Configuração para desenvolvimento
-
-Se você pretende modificar notebooks, scripts ou arquivos do projeto, instale os
-hooks do `pre-commit` depois de clonar o repositório:
+Depois, ative o ambiente adequado:
 
 ```sh
 pixi shell
-pre-commit install
 ```
 
-Isso instala verificações automáticas que rodam antes de cada commit. Elas ajudam
-a manter os notebooks limpos, padronizados e mais fáceis de revisar.
-
-Se você clonar este repositório novamente em outra pasta do computador, será
-necessário rodar `pre-commit install` também nessa nova cópia.
-
-## Tarefas Pixi úteis
-
-Alguns comandos já estão definidos em `pixi.toml`:
+ou, para notebooks com `py-pde`:
 
 ```sh
-pixi run notebooks-smoke
+pixi shell -e pypde-env
 ```
 
-Lista os notebooks encontrados em `notebooks/`. É uma verificação rápida para
-confirmar que o diretório de notebooks está organizado.
-
-```sh
-pixi run notebooks-sync
-```
-
-Sincroniza notebooks `.ipynb` com Jupytext.
-
-```sh
-pixi run precommit
-```
-
-Executa as verificações do `pre-commit` em todos os arquivos.
+Ao terminar alterações, sincronize os notebooks e rode as verificações:
 
 ```sh
 pixi run precommit-sync
 ```
 
-Sincroniza os notebooks e depois executa as verificações do `pre-commit`.
+## Tarefas Pixi úteis
 
-## Boas práticas para notebooks científicos
+Lista os notebooks encontrados em `notebooks/`:
 
-- Coloque notebooks principais em `notebooks/`.
-- Use nomes descritivos, por exemplo `analise_dados_experimento_01.ipynb`.
-- Evite depender de arquivos que existem apenas no seu computador.
-- Registre no próprio notebook quais dados, parâmetros e hipóteses foram usados.
-- Mantenha células em uma ordem que permita executar o notebook do começo ao
-  fim.
-- Sempre que possível, defina sementes aleatórias em simulações estocásticas.
+```sh
+pixi run notebooks-smoke
+```
+
+Sincroniza notebooks `.ipynb` com Jupytext:
+
+```sh
+pixi run notebooks-sync
+```
+
+Executa as verificações do `pre-commit`:
+
+```sh
+pixi run precommit
+```
+
+Sincroniza os notebooks e executa as verificações:
+
+```sh
+pixi run precommit-sync
+```
+
+## Jupytext
+
+Os notebooks são mantidos em pares:
+
+- `.ipynb`: arquivo aberto no Jupyter/VS Code.
+- `.py`: representação textual em formato percent, mais fácil de revisar em
+  diffs.
+
+A configuração está em `jupytext.toml`:
+
+```toml
+formats = "ipynb,py:percent"
+```
+
+Para sincronizar manualmente:
+
+```sh
+pixi run notebooks-sync
+```
 
 ## Arquivos gerados localmente
 
-O `.gitignore` deste projeto ignora alguns diretórios e arquivos comuns de saída,
-como:
+O `.gitignore` ignora arquivos comuns de saída, como:
 
 - `tmp/`
 - `outputs/`
@@ -209,28 +182,23 @@ como:
 - arquivos `.csv`
 - figuras `.png` dentro de `notebooks/`
 
-Isso ajuda a evitar que resultados temporários ou arquivos grandes sejam
-versionados por engano. Se algum arquivo de resultado for essencial para o
-projeto, discuta antes de adicioná-lo ao Git.
+Se algum resultado for essencial para uma aula, prefira documentar no notebook
+como reproduzi-lo.
 
 ## Problemas comuns
 
 ### O comando `pixi` não foi encontrado
 
-Provavelmente o Pixi não foi instalado ou o terminal ainda não reconheceu a nova
-instalação. Feche e abra o terminal. Se o problema continuar, revise as
-instruções oficiais de instalação do Pixi.
+Feche e abra novamente o terminal. Se o problema continuar, revise a instalação
+do Pixi.
 
 ### O notebook não encontra uma biblioteca Python
 
-Confirme que você ativou o ambiente correto:
+Confira se o ambiente correto está ativo. Para notebooks com `py-pde`, use:
 
 ```sh
-pixi shell
+pixi shell -e pypde-env
 ```
-
-Se estiver usando VS Code, confira também se o kernel selecionado pertence ao
-ambiente Pixi deste projeto.
 
 ### As verificações falharam antes do commit
 
@@ -240,8 +208,8 @@ Rode:
 pixi run precommit-sync
 ```
 
-Algumas correções podem ser feitas automaticamente. Depois disso, revise os
-arquivos modificados, execute novamente o comando se necessário e faça o commit.
+Depois revise os arquivos modificados e execute novamente o comando se
+necessário.
 
 ## Licença
 
@@ -249,7 +217,8 @@ Este projeto usa a licença MIT. Veja o arquivo `LICENSE`.
 
 ## Declaração de uso de IA
 
-A revisão, refatoração e implementação deste template foi/é assistida por IA. LLMs utilizadas:
+A revisão, refatoração e implementação deste repositório foi/é assistida por IA.
+LLMs utilizadas:
 
 - OpenAI Codex;
 - Github Copilot.
@@ -257,12 +226,10 @@ A revisão, refatoração e implementação deste template foi/é assistida por 
 ## Apoio institucional
 
 Este projeto recebe apoio institucional do
-[Laboratório Nacional de Computação Científica (LNCC)](https://www.gov.br/lncc/pt-br),
-unidade de pesquisa do Ministério da Ciência, Tecnologia e Inovação (MCTI),
-Brasil.
+[Laboratório Nacional de Computação Científica (LNCC)](https://www.gov.br/lncc/pt-br).
 
-<p align="center">
+<p align="left">
   <a href="https://www.gov.br/lncc/pt-br">
-    <img src="resources/logo/lncc-mcti.svg" alt="LNCC (MCTI) logo" width="820">
+    <img src="resources/logo/lncc-mcti.svg" alt="Logo do LNCC" width="240">
   </a>
 </p>
