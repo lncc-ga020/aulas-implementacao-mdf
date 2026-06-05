@@ -1,4 +1,4 @@
-# template-mdf
+# aulas-implementacao-mdf
 
 Repositório com notebooks de exemplos para estudos computacionais em métodos
 numéricos, com ambiente reprodutível usando
@@ -74,8 +74,8 @@ pixi --version
 ### 2. Clone o repositório
 
 ```sh
-git clone git@github.com:volpatto/template-mdf.git
-cd template-mdf
+git clone https://github.com/lncc-ga020/aulas-implementacao-mdf.git
+cd aulas-implementacao-mdf
 ```
 
 ### 3. Instale as dependências
