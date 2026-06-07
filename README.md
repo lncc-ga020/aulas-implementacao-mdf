@@ -230,6 +230,6 @@ Este projeto recebe apoio institucional do
 
 <p align="left">
   <a href="https://www.gov.br/lncc/pt-br">
-    <img src="resources/logo/lncc-mcti.svg" alt="Logo do LNCC" width="240">
+    <img src="resources/logo/lncc-mcti.svg" alt="Logo do LNCC" width="800">
   </a>
 </p>
