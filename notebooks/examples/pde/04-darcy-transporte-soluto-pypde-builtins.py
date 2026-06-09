@@ -1,13 +1,13 @@
 # %% [markdown]
 # # Darcy + transporte usando `PDE` e `FieldCollection`
 #
-# Este notebook e uma alternativa a aula 04, usando mais diretamente a interface
-# de alto nivel da `py-pde`.
+# Este notebook é uma alternativa à aula 04, usando mais diretamente a interface
+# de alto nível da `py-pde`.
 #
-# Mantemos a configuracao fisica:
+# Mantemos a configuração física:
 #
-# * dominio $50\,\mathrm{m}\times 50\,\mathrm{m}$;
-# * obstaculo quadrado central com 15% da area;
+# * domínio $50\,\mathrm{m}\times 50\,\mathrm{m}$;
+# * obstáculo quadrado central com 15% da área;
 # * $k_m=10^{-13}\,\mathrm{m^2}$;
 # * $k_o=10^{-18}\,\mathrm{m^2}$;
 # * $\Delta P=100\,\mathrm{MPa}$;
@@ -15,8 +15,8 @@
 # * $D=2\times 10^{-5}\,\mathrm{m^2/s}$;
 # * tempo final $60000\,\mathrm{s}$.
 #
-# A pressao e resolvida por uma relaxacao declarada com `pde.PDE`. O transporte
-# usa um estado com duas variaveis, `P` e `c`, em uma `FieldCollection`:
+# A pressão é resolvida por uma relaxação declarada com `pde.PDE`. O transporte
+# usa um estado com duas variáveis, `P` e `c`, em uma `FieldCollection`:
 #
 # $$
 # P_t = 0,
@@ -25,11 +25,11 @@
 # $$
 #
 # com $\mathbf v=\mathbf q/\phi$. O termo $D_\mathrm{efetivo}$ preserva o
-# coeficiente fisico e acrescenta uma difusao numerica moderada para estabilizar
-# a adveccao centrada usada pelos operadores built-in.
+# coeficiente físico e acrescenta uma difusão numérica moderada para estabilizar
+# a advecção centrada usada pelos operadores built-in.
 
 # %% [markdown]
-# ## Importando as dependencias
+# ## Importando as dependências
 
 # %%
 from matplotlib.patches import Rectangle
@@ -66,7 +66,9 @@ def patch_number_array_for_numpy2(module):
             return original_number_array(data, dtype=dtype, copy=copy)
         except ValueError as error:
             if copy is False and "Unable to avoid copy" in str(error):
-                target_dtype = get_common_dtype(data) if dtype is None else np.dtype(dtype)
+                target_dtype = (
+                    get_common_dtype(data) if dtype is None else np.dtype(dtype)
+                )
                 return np.asarray(data, dtype=target_dtype)
             raise
 
@@ -160,12 +162,7 @@ class DarcyPDEProblem:
     def pressure_equation(self):
         permeability_relative = self.permeability_relative_field()
         return pde.PDE(
-            {
-                "P": (
-                    "k_rel * laplace(P) "
-                    "+ dot(gradient(k_rel), gradient(P))"
-                )
-            },
+            {"P": ("k_rel * laplace(P) " "+ dot(gradient(k_rel), gradient(P))")},
             consts={"k_rel": permeability_relative},
             bc=self.pressure_boundary_condition(),
         )
@@ -264,11 +261,11 @@ concentration_history = np.array([state[1].data for _, state in storage.items()]
 pd.DataFrame(
     {
         "quantidade": [
-            "lado do obstaculo",
-            "fracao de area do obstaculo",
+            "lado do obstáculo",
+            "fração de área do obstáculo",
             "porosidade",
-            "D fisico",
-            "D numerico",
+            "D físico",
+            "D numérico",
             "D usado",
             "max |v|",
             "dt CFL",
@@ -294,8 +291,9 @@ pd.DataFrame(
     }
 )
 
+
 # %% [markdown]
-# ## Visualizacao
+# ## Visualização
 
 # %%
 def plot_field_image(
@@ -366,7 +364,7 @@ plot_field_image(
     axes[0],
     darcy.grid,
     pressure.data / 1e6,
-    "Pressao e linhas de corrente",
+    "Pressão e linhas de corrente",
     cmap="cividis",
     colorbar_label="MPa",
 )
@@ -391,7 +389,7 @@ for snapshot_index in snapshot_indices:
 axes[1].set_xlabel("x [m]")
 axes[1].set_ylabel(rf"$c(x,{positions_y[center_y_index]:.1f},t)$")
 axes[1].set_ylim(-0.05, 1.05)
-axes[1].set_title("Corte central da concentracao")
+axes[1].set_title("Corte central da concentração")
 axes[1].legend(fontsize=8)
 
 fig.tight_layout()

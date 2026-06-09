@@ -1,18 +1,18 @@
 # %% [markdown]
-# # Introducao a PDEs com `py-pde`
+# # Introdução a PDEs com `py-pde`
 #
-# Nesta primeira aula, vamos usar a interface de alto nivel da `py-pde`, baseada
-# em grades, campos e equacoes escritas como expressoes. A ideia e resolver uma
-# relaxacao transiente cujo estado estacionario satisfaz o problema de Poisson
+# Nesta primeira aula, vamos usar a interface de alto nível da `py-pde`, baseada
+# em grades, campos e equações escritas como expressões. A ideia é resolver uma
+# relaxação transiente cujo estado estacionário satisfaz o problema de Poisson
 # em 1D.
 #
-# O problema estacionario de referencia e
+# O problema estacionário de referência é
 #
 # $$
 # u_{xx} = f(x), \qquad x\in(0,1),
 # $$
 #
-# com condicoes de Dirichlet homogeneas:
+# com condições de Dirichlet homogêneas:
 #
 # $$
 # u(0)=0, \qquad u(1)=0.
@@ -26,17 +26,17 @@
 # f(x)=-\pi^2\sin(\pi x).
 # $$
 #
-# Em vez de montar matrizes manualmente, escrevemos a relaxacao
+# Em vez de montar matrizes manualmente, escrevemos a relaxação
 #
 # $$
 # u_t = u_{xx} - f(x).
 # $$
 #
-# Quando $t$ cresce, essa equacao converge para o estado estacionario de
+# Quando $t$ cresce, essa equação converge para o estado estacionário de
 # Poisson.
 
 # %% [markdown]
-# ## Importando as dependencias
+# ## Importando as dependências
 
 # %%
 from time import perf_counter
@@ -58,10 +58,10 @@ plt.rcParams.update(
 
 
 # %% [markdown]
-# ## Funcoes do problema
+# ## Funções do problema
 #
-# A `py-pde` permite passar campos como constantes da expressao. Esse e o mesmo
-# padrao usado em exemplos de PDEs heterogeneas: construimos um `ScalarField`
+# A `py-pde` permite passar campos como constantes da expressão. Esse é o mesmo
+# padrão usado em exemplos de PDEs heterogêneas: construímos um `ScalarField`
 # para a fonte e passamos esse campo em `consts`.
 
 # %%
@@ -90,7 +90,7 @@ def poisson_relaxation_1d(grid):
 
 
 # %% [markdown]
-# ## Grade, campo e relaxacao ate o estado estacionario
+# ## Grade, campo e relaxação até o estado estacionário
 
 # %%
 grid_1d = pde.CartesianGrid([[0.0, 1.0]], 64, periodic=False)
@@ -115,7 +115,7 @@ exact_1d = exact_stationary_1d(positions_1d)
 
 pd.DataFrame(
     {
-        "quantidade": ["numero de celulas", "h", "tempo de relaxacao", "erro maximo"],
+        "quantidade": ["número de células", "h", "tempo de relaxação", "erro máximo"],
         "valor": [
             grid_1d.shape[0],
             float(grid_1d.discretization[0]),
@@ -132,7 +132,7 @@ axes[0].plot(positions_1d, exact_1d, color="black", linewidth=2.0, label="exata"
 axes[0].plot(positions_1d, solution_1d.data, "--", label="py-pde")
 axes[0].set_xlabel("x")
 axes[0].set_ylabel("u(x)")
-axes[0].set_title("Estado estacionario por relaxacao")
+axes[0].set_title("Estado estacionário por relaxação")
 axes[0].legend()
 
 axes[1].plot(positions_1d, source_1d.data, color="tab:orange")
@@ -144,10 +144,10 @@ fig.tight_layout()
 plt.show()
 
 # %% [markdown]
-# ## Evolucao transiente
+# ## Evolução transiente
 #
-# Agora guardamos varios instantes da relaxacao. Em 1D, a comparacao temporal
-# pode ser feita por curvas e por um mapa espaco-tempo.
+# Agora guardamos vários instantes da relaxação. Em 1D, a comparação temporal
+# pode ser feita por curvas e por um mapa espaço-tempo.
 
 # %%
 transient_grid_1d = pde.CartesianGrid([[0.0, 1.0]], 64, periodic=False)
@@ -217,7 +217,7 @@ image = axes[1].imshow(
 )
 axes[1].set_xlabel("x")
 axes[1].set_ylabel("t")
-axes[1].set_title("Mapa espaco-tempo")
+axes[1].set_title("Mapa espaço-tempo")
 fig.colorbar(image, ax=axes[1], label="u")
 
 fig.tight_layout()
@@ -227,8 +227,8 @@ plt.show()
 # %% [markdown]
 # ## Convergencia espacial
 #
-# Repetimos a mesma equacao em varias malhas e comparamos a solucao em um tempo
-# final fixo. O erro temporal e controlado pelo solver adaptativo do SciPy, e o
+# Repetimos a mesma equação em várias malhas e comparamos a solução em um tempo
+# final fixo. O erro temporal é controlado pelo solver adaptativo do SciPy, e o
 # erro observado deve ser dominado pela discretizacao espacial.
 
 # %%
@@ -281,7 +281,7 @@ for num_cells in [16, 32, 64, 128]:
         {
             "N": num_cells,
             "h": step_size,
-            "erro maximo": np.max(np.abs(error)),
+            "erro máximo": np.max(np.abs(error)),
             "erro L2 discreto": np.sqrt(step_size * np.sum(error**2)),
         }
     )
@@ -292,7 +292,7 @@ convergence_1d
 # %%
 fig, axis = plt.subplots()
 
-axis.loglog(convergence_1d["h"], convergence_1d["erro maximo"], "o-", label="max")
+axis.loglog(convergence_1d["h"], convergence_1d["erro máximo"], "o-", label="max")
 axis.loglog(convergence_1d["h"], convergence_1d["erro L2 discreto"], "s-", label="L2")
 convergence_triangle(axis, base_x=0.04, base_y=5e-5, order=2)
 
@@ -306,7 +306,7 @@ plt.show()
 # %% [markdown]
 # ## Comparando solvers temporais
 #
-# A comparacao abaixo usa a mesma equacao declarada com `PDE`, mudando apenas o
+# A comparação abaixo usa a mesma equação declarada com `PDE`, mudando apenas o
 # solver temporal.
 
 # %%
@@ -335,7 +335,7 @@ def run_transient_solver_1d(
     return {
         "metodo": label,
         "dt usado": time_step,
-        "erro maximo": error,
+        "erro máximo": error,
         "tempo (ms)": elapsed_ms,
     }
 
@@ -353,14 +353,14 @@ solver_comparison_1d
 fig, axes = plt.subplots(1, 2, figsize=(11, 4.2))
 positions = np.arange(len(solver_comparison_1d))
 
-axes[0].bar(positions, solver_comparison_1d["erro maximo"], color="tab:blue")
+axes[0].bar(positions, solver_comparison_1d["erro máximo"], color="tab:blue")
 axes[0].set_yscale("log")
-axes[0].set_ylabel("erro maximo")
+axes[0].set_ylabel("erro máximo")
 axes[0].set_title("Erro no tempo final")
 
 axes[1].bar(positions, solver_comparison_1d["tempo (ms)"], color="tab:purple")
 axes[1].set_ylabel("tempo (ms)")
-axes[1].set_title("Tempo de execucao")
+axes[1].set_title("Tempo de execução")
 
 for axis in axes:
     axis.set_xticks(positions)

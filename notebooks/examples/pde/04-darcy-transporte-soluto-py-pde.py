@@ -2,9 +2,9 @@
 # # Darcy acoplado com transporte de soluto
 #
 # Nesta aula, usamos o campo de velocidade obtido pelo problema de Darcy para
-# transportar um soluto diluido em meio poroso.
+# transportar um soluto diluído em meio poroso.
 #
-# A pressao satisfaz
+# A pressão satisfaz
 #
 # $$
 # \nabla\cdot\left(\frac{k}{\mu}\nabla p\right)=0,
@@ -20,11 +20,11 @@
 # \nabla\cdot(\mathbf q c-\phi D\nabla c)=0.
 # $$
 #
-# O soluto e injetado na borda de maior pressao. O estado tem duas variaveis,
-# pressao e concentracao, representadas por `FieldCollection`.
+# O soluto é injetado na borda de maior pressão. O estado tem duas variáveis,
+# pressão e concentração, representadas por `FieldCollection`.
 
 # %% [markdown]
-# ## Importando as dependencias
+# ## Importando as dependências
 
 # %%
 from matplotlib.patches import Rectangle
@@ -48,7 +48,6 @@ plt.rcParams.update(
         "font.size": 11,
     }
 )
-
 
 # %% [markdown]
 # ## Compatibilidade local
@@ -226,30 +225,38 @@ class DarcyObstacle2D:
         flux_x = np.zeros((num_cells_x + 1, num_cells_y))
         flux_y = np.zeros((num_cells_x, num_cells_y + 1))
 
-        flux_x[0, :] = -mobility[0, :] * (
-            pressure_data[0, :] - self.pressure_left
-        ) / (0.5 * step_x)
-        flux_x[-1, :] = -mobility[-1, :] * (
-            self.pressure_right - pressure_data[-1, :]
-        ) / (0.5 * step_x)
+        flux_x[0, :] = (
+            -mobility[0, :]
+            * (pressure_data[0, :] - self.pressure_left)
+            / (0.5 * step_x)
+        )
+        flux_x[-1, :] = (
+            -mobility[-1, :]
+            * (self.pressure_right - pressure_data[-1, :])
+            / (0.5 * step_x)
+        )
 
         for face_x in range(1, num_cells_x):
             face_mobility = self.harmonic_mean(
                 mobility[face_x - 1, :],
                 mobility[face_x, :],
             )
-            flux_x[face_x, :] = -face_mobility * (
-                pressure_data[face_x, :] - pressure_data[face_x - 1, :]
-            ) / step_x
+            flux_x[face_x, :] = (
+                -face_mobility
+                * (pressure_data[face_x, :] - pressure_data[face_x - 1, :])
+                / step_x
+            )
 
         for face_y in range(1, num_cells_y):
             face_mobility = self.harmonic_mean(
                 mobility[:, face_y - 1],
                 mobility[:, face_y],
             )
-            flux_y[:, face_y] = -face_mobility * (
-                pressure_data[:, face_y] - pressure_data[:, face_y - 1]
-            ) / step_y
+            flux_y[:, face_y] = (
+                -face_mobility
+                * (pressure_data[:, face_y] - pressure_data[:, face_y - 1])
+                / step_y
+            )
 
         return flux_x, flux_y
 
@@ -265,6 +272,7 @@ darcy = DarcyObstacle2D()
 pressure = darcy.solve_pressure()
 flux_x, flux_y = darcy.face_fluxes(pressure)
 velocity_x, velocity_y, speed = darcy.cell_center_velocity(pressure)
+
 
 # %% [markdown]
 # ## Classe acoplada
@@ -360,7 +368,7 @@ class DarcyTransportPDE(pde.PDEBase):
 transport_model = DarcyTransportPDE(flux_x, flux_y)
 
 # %% [markdown]
-# ## Condicao inicial e escala de tempo
+# ## Condição inicial e escala de tempo
 
 # %%
 initial_pressure = pde.ScalarField(
@@ -384,8 +392,8 @@ final_time = 60_000.0
 pd.DataFrame(
     {
         "quantidade": [
-            "lado do obstaculo",
-            "fracao de area do obstaculo",
+            "lado do obstáculo",
+            "fração de área do obstáculo",
             "porosidade",
             "D efetivo",
             "max |q|",
@@ -426,8 +434,9 @@ concentration_history = np.array([state[1].data for _, state in storage.items()]
 
 controller.diagnostics["solver"]
 
+
 # %% [markdown]
-# ## Visualizacao
+# ## Visualização
 
 # %%
 def plot_field_image(
@@ -498,7 +507,7 @@ plot_field_image(
     axes[0],
     darcy.grid,
     pressure.data / 1e6,
-    "Pressao e linhas de corrente",
+    "Pressão e linhas de corrente",
     cmap="cividis",
     colorbar_label="MPa",
 )
@@ -523,13 +532,13 @@ for snapshot_index in snapshot_indices:
 axes[1].set_xlabel("x [m]")
 axes[1].set_ylabel(rf"$c(x,{positions_y[center_y_index]:.1f},t)$")
 axes[1].set_ylim(-0.05, 1.05)
-axes[1].set_title("Corte central da concentracao")
+axes[1].set_title("Corte central da concentração")
 axes[1].legend(fontsize=8)
 
 fig.tight_layout()
 plt.show()
 
 # %% [markdown]
-# Esta configuracao usa a mesma escala fisica da primeira versao da aula:
+# Esta configuração usa a mesma escala física da primeira versão da aula:
 # velocidade de Darcy dimensional, CFL baseado na velocidade de poro e tempo
 # final de aproximadamente 16,7 horas.

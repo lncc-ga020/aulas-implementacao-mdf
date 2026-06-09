@@ -2,17 +2,17 @@
 # # Poisson 2D com `py-pde`
 #
 # Agora repetimos a ideia da aula anterior em duas dimensoes. O foco continua em
-# usar os recursos da `py-pde`: grades cartesianas, `ScalarField`, equacoes em
-# forma de expressao, armazenamento de trajetorias e visualizacao.
+# usar os recursos da `py-pde`: grades cartesianas, `ScalarField`, equações em
+# forma de expressão, armazenamento de trajetórias e visualização.
 #
-# O problema estacionario de referencia e
+# O problema estacionário de referência é
 #
 # $$
 # \Delta u = f(x,y),
 # \qquad (x,y)\in(0,1)\times(0,1),
 # $$
 #
-# com $u=0$ na fronteira. A solucao exata escolhida e
+# com $u=0$ na fronteira. A solução exata escolhida é
 #
 # $$
 # u_\mathrm{exata}(x,y)=\sin(\pi x)\sin(\pi y),
@@ -25,7 +25,7 @@
 # $$
 
 # %% [markdown]
-# ## Importando as dependencias
+# ## Importando as dependências
 
 # %%
 import matplotlib.pyplot as plt
@@ -45,7 +45,7 @@ plt.rcParams.update(
 
 
 # %% [markdown]
-# ## Equacao e campos
+# ## Equação e campos
 
 # %%
 def coordinates_2d(grid):
@@ -104,7 +104,7 @@ def plot_field_image(
 
 
 # %% [markdown]
-# ## Estado estacionario por relaxacao
+# ## Estado estacionário por relaxação
 
 # %%
 grid_2d = pde.CartesianGrid([[0.0, 1.0], [0.0, 1.0]], [64, 64], periodic=False)
@@ -125,7 +125,7 @@ error_2d = solution_2d.data - exact_2d
 
 pd.DataFrame(
     {
-        "quantidade": ["Nx", "Ny", "hx", "hy", "erro maximo"],
+        "quantidade": ["Nx", "Ny", "hx", "hy", "erro máximo"],
         "valor": [
             grid_2d.shape[0],
             grid_2d.shape[1],
@@ -143,7 +143,7 @@ plot_field_image(
     axes[0],
     grid_2d,
     exact_2d,
-    "Solucao exata",
+    "Solução exata",
     colorbar_label="u",
     vmin=0.0,
     vmax=1.0,
@@ -152,7 +152,7 @@ plot_field_image(
     axes[1],
     grid_2d,
     solution_2d.data,
-    "Relaxacao com py-pde",
+    "Relaxação com py-pde",
     colorbar_label="u",
     vmin=0.0,
     vmax=1.0,
@@ -170,10 +170,10 @@ fig.tight_layout()
 plt.show()
 
 # %% [markdown]
-# ## Evolucao transiente
+# ## Evolução transiente
 #
 # Nos mapas abaixo, todos os instantes usam a mesma barra de cor, de 0 a 1.
-# Isso e essencial para comparar amplitudes ao longo do tempo.
+# Isso é essencial para comparar amplitudes ao longo do tempo.
 
 # %%
 transient_grid_2d = pde.CartesianGrid(
@@ -228,7 +228,7 @@ fig.tight_layout()
 plt.show()
 
 # %% [markdown]
-# ## Cortes e mapa espaco-tempo
+# ## Cortes e mapa espaço-tempo
 
 # %%
 positions_x_2d, positions_y_2d = transient_grid_2d.axes_coords
@@ -265,7 +265,7 @@ image = axes[1].imshow(
 )
 axes[1].set_xlabel("x")
 axes[1].set_ylabel("t")
-axes[1].set_title("Mapa espaco-tempo no corte central")
+axes[1].set_title("Mapa espaço-tempo no corte central")
 fig.colorbar(image, ax=axes[1], label="u")
 
 fig.tight_layout()
@@ -309,7 +309,7 @@ for num_cells in [12, 16, 24, 32]:
         {
             "N": num_cells,
             "h": step_size,
-            "erro maximo": np.max(np.abs(error)),
+            "erro máximo": np.max(np.abs(error)),
             "erro L2 discreto": np.sqrt((step_size**2) * np.sum(error**2)),
         }
     )
@@ -320,7 +320,7 @@ transient_convergence_2d
 # %%
 orders_max_2d = estimate_orders(
     transient_convergence_2d["h"],
-    transient_convergence_2d["erro maximo"],
+    transient_convergence_2d["erro máximo"],
 )
 orders_l2_2d = estimate_orders(
     transient_convergence_2d["h"],
@@ -330,7 +330,7 @@ orders_l2_2d = estimate_orders(
 pd.DataFrame(
     {
         "N fino": transient_convergence_2d["N"].iloc[1:].to_numpy(),
-        "ordem pelo erro maximo": orders_max_2d,
+        "ordem pelo erro máximo": orders_max_2d,
         "ordem pelo erro L2": orders_l2_2d,
     }
 )

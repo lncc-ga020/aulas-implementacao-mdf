@@ -1,8 +1,8 @@
 # %% [markdown]
-# # Darcy 2D com obstaculo de baixa permeabilidade
+# # Darcy 2D com obstáculo de baixa permeabilidade
 #
-# Nesta aula, resolvemos um problema estacionario de escoamento em meio poroso
-# heterogeneo.
+# Nesta aula, resolvemos um problema estacionário de escoamento em meio poroso
+# heterogêneo.
 #
 # $$
 # \mathbf q = -\frac{k}{\mu}\nabla p,
@@ -10,13 +10,13 @@
 # \nabla\cdot\mathbf q = 0.
 # $$
 #
-# O dominio mede $50\,\mathrm{m}\times 50\,\mathrm{m}$. O obstaculo quadrado
-# central ocupa 15% da area do dominio. Na esquerda impomos a maior pressao, na
-# direita a menor pressao, e nas bordas superior e inferior impomos fluxo normal
+# O domínio mede $50\,\mathrm{m}\times 50\,\mathrm{m}$. O obstáculo quadrado
+# central ocupa 15% da área do domínio. Na esquerda impomos a maior pressão, na
+# direita a menor pressão, e nas bordas superior e inferior impomos fluxo normal
 # nulo.
 
 # %% [markdown]
-# ## Importando as dependencias
+# ## Importando as dependências
 
 # %%
 from matplotlib.patches import Rectangle
@@ -198,30 +198,38 @@ class DarcyObstacle2D:
         flux_x = np.zeros((num_cells_x + 1, num_cells_y))
         flux_y = np.zeros((num_cells_x, num_cells_y + 1))
 
-        flux_x[0, :] = -mobility[0, :] * (
-            pressure_data[0, :] - self.pressure_left
-        ) / (0.5 * step_x)
-        flux_x[-1, :] = -mobility[-1, :] * (
-            self.pressure_right - pressure_data[-1, :]
-        ) / (0.5 * step_x)
+        flux_x[0, :] = (
+            -mobility[0, :]
+            * (pressure_data[0, :] - self.pressure_left)
+            / (0.5 * step_x)
+        )
+        flux_x[-1, :] = (
+            -mobility[-1, :]
+            * (self.pressure_right - pressure_data[-1, :])
+            / (0.5 * step_x)
+        )
 
         for face_x in range(1, num_cells_x):
             face_mobility = self.harmonic_mean(
                 mobility[face_x - 1, :],
                 mobility[face_x, :],
             )
-            flux_x[face_x, :] = -face_mobility * (
-                pressure_data[face_x, :] - pressure_data[face_x - 1, :]
-            ) / step_x
+            flux_x[face_x, :] = (
+                -face_mobility
+                * (pressure_data[face_x, :] - pressure_data[face_x - 1, :])
+                / step_x
+            )
 
         for face_y in range(1, num_cells_y):
             face_mobility = self.harmonic_mean(
                 mobility[:, face_y - 1],
                 mobility[:, face_y],
             )
-            flux_y[:, face_y] = -face_mobility * (
-                pressure_data[:, face_y] - pressure_data[:, face_y - 1]
-            ) / step_y
+            flux_y[:, face_y] = (
+                -face_mobility
+                * (pressure_data[:, face_y] - pressure_data[:, face_y - 1])
+                / step_y
+            )
 
         return flux_x, flux_y
 
@@ -248,7 +256,7 @@ velocity_x, velocity_y, speed = darcy.cell_center_velocity(pressure)
 flow_left, flow_right, relative_imbalance = darcy.mass_balance(pressure)
 
 # %% [markdown]
-# ## Campo de permeabilidade e solucao de pressao
+# ## Campo de permeabilidade e solução de pressão
 
 # %%
 pd.DataFrame(
@@ -259,11 +267,11 @@ pd.DataFrame(
             "Ny",
             "Delta P",
             "k matriz",
-            "k obstaculo",
-            "lado do obstaculo",
-            "fracao de area do obstaculo",
-            "vazao pela esquerda",
-            "vazao pela direita",
+            "k obstáculo",
+            "lado do obstáculo",
+            "fração de área do obstáculo",
+            "vazão pela esquerda",
+            "vazão pela direita",
             "desbalanco relativo",
         ],
         "valor": [
@@ -281,6 +289,7 @@ pd.DataFrame(
         ],
     }
 )
+
 
 # %%
 def plot_field_image(axis, grid, data, title, cmap="viridis", colorbar_label=None):
@@ -325,7 +334,7 @@ plot_field_image(
     axes[1],
     darcy.grid,
     pressure.data / 1e6,
-    "Pressao",
+    "Pressão",
     cmap="viridis",
     colorbar_label="MPa",
 )
@@ -358,7 +367,7 @@ plot_field_image(
     axes[0],
     darcy.grid,
     pressure.data / 1e6,
-    "Pressao e linhas de corrente",
+    "Pressão e linhas de corrente",
     cmap="viridis",
     colorbar_label="MPa",
 )
@@ -384,8 +393,8 @@ axes[1].plot(
     label=rf"$p({positions_x[center_x_index]:.1f},y)$",
 )
 axes[1].set_xlabel("coordenada [m]")
-axes[1].set_ylabel("pressao [MPa]")
-axes[1].set_title("Cortes pelo centro do dominio")
+axes[1].set_ylabel("pressão [MPa]")
+axes[1].set_title("Cortes pelo centro do domínio")
 axes[1].legend()
 
 fig.tight_layout()

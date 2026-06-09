@@ -1,17 +1,17 @@
 # %% [markdown]
-# # Darcy 2D com obstaculo usando recursos da `py-pde`
+# # Darcy 2D com obstáculo usando recursos da `py-pde`
 #
-# Este notebook e uma alternativa a aula 03. A geometria e os parametros fisicos
-# seguem a mesma configuracao:
+# Este notebook é uma alternativa à aula 03. A geometria e os parâmetros físicos
+# seguem a mesma configuração:
 #
-# * dominio $50\,\mathrm{m}\times 50\,\mathrm{m}$;
-# * obstaculo quadrado central com 15% da area do dominio;
+# * domínio $50\,\mathrm{m}\times 50\,\mathrm{m}$;
+# * obstáculo quadrado central com 15% da área do domínio;
 # * $k_m=10^{-13}\,\mathrm{m^2}$ na matriz;
-# * $k_o=10^{-18}\,\mathrm{m^2}$ no obstaculo;
+# * $k_o=10^{-18}\,\mathrm{m^2}$ no obstáculo;
 # * $\Delta P=100\,\mathrm{MPa}$ entre esquerda e direita.
 #
-# Aqui a pressao e obtida por uma relaxacao transiente escrita diretamente como
-# uma `pde.PDE`. Trabalhamos com a pressao adimensional
+# Aqui a pressão é obtida por uma relaxação transiente escrita diretamente como
+# uma `pde.PDE`. Trabalhamos com a pressão adimensional
 #
 # $$
 # P=\frac{p-p_R}{p_L-p_R},
@@ -26,10 +26,10 @@
 # \nabla k_\mathrm{rel}\cdot\nabla P.
 # $$
 #
-# Essa e a forma expandida de $\nabla\cdot(k_\mathrm{rel}\nabla P)$.
+# Essa é a forma expandida de $\nabla\cdot(k_\mathrm{rel}\nabla P)$.
 
 # %% [markdown]
-# ## Importando as dependencias
+# ## Importando as dependências
 
 # %%
 from matplotlib.patches import Rectangle
@@ -66,7 +66,9 @@ def patch_number_array_for_numpy2(module):
             return original_number_array(data, dtype=dtype, copy=copy)
         except ValueError as error:
             if copy is False and "Unable to avoid copy" in str(error):
-                target_dtype = get_common_dtype(data) if dtype is None else np.dtype(dtype)
+                target_dtype = (
+                    get_common_dtype(data) if dtype is None else np.dtype(dtype)
+                )
                 return np.asarray(data, dtype=target_dtype)
             raise
 
@@ -152,12 +154,7 @@ class DarcyPDEProblem:
     def pressure_equation(self):
         permeability_relative = self.permeability_relative_field()
         return pde.PDE(
-            {
-                "P": (
-                    "k_rel * laplace(P) "
-                    "+ dot(gradient(k_rel), gradient(P))"
-                )
-            },
+            {"P": ("k_rel * laplace(P) " "+ dot(gradient(k_rel), gradient(P))")},
             consts={"k_rel": permeability_relative},
             bc=self.pressure_boundary_condition(),
         )
@@ -215,9 +212,9 @@ pd.DataFrame(
             "Ny",
             "Delta P",
             "k matriz",
-            "k obstaculo",
-            "lado do obstaculo",
-            "fracao de area do obstaculo",
+            "k obstáculo",
+            "lado do obstáculo",
+            "fração de área do obstáculo",
             "largura de interface",
             "max |q|",
         ],
@@ -235,6 +232,7 @@ pd.DataFrame(
         ],
     }
 )
+
 
 # %%
 def plot_field_image(axis, grid, data, title, cmap="viridis", colorbar_label=None):
@@ -279,7 +277,7 @@ plot_field_image(
     axes[1],
     darcy.grid,
     pressure.data / 1e6,
-    "Pressao",
+    "Pressão",
     cmap="viridis",
     colorbar_label="MPa",
 )
@@ -312,7 +310,7 @@ plot_field_image(
     axes[0],
     darcy.grid,
     pressure.data / 1e6,
-    "Pressao e linhas de corrente",
+    "Pressão e linhas de corrente",
     cmap="viridis",
     colorbar_label="MPa",
 )
@@ -338,8 +336,8 @@ axes[1].plot(
     label=rf"$p({positions_x[center_x_index]:.1f},y)$",
 )
 axes[1].set_xlabel("coordenada [m]")
-axes[1].set_ylabel("pressao [MPa]")
-axes[1].set_title("Cortes pelo centro do dominio")
+axes[1].set_ylabel("pressão [MPa]")
+axes[1].set_title("Cortes pelo centro do domínio")
 axes[1].legend()
 
 fig.tight_layout()
